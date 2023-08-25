@@ -59,8 +59,11 @@ public class GamePanel extends JFrame {
     public int randomNumber;
     public int randomNumber2;
     String[] villianImg = {"villian1.png","villian2.png","villian3.png"};
+    private String selectedImageName;
 
-    public GamePanel() {
+
+    public GamePanel(String imageString) {
+        this.selectedImageName=imageString;
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         //        for background image
@@ -98,7 +101,9 @@ public class GamePanel extends JFrame {
         setSize(width, height);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
-        planeImage = new ImageIcon("heroUfo.png").getImage();
+        // System.out.println(selectedImageName);
+        planeImage = new ImageIcon(selectedImageName).getImage();
+        // System.out.println(planeImage);
         treeImage = new ImageIcon("downsideRock.png").getImage();
         ufoImage = new ImageIcon("upsideRock.png").getImage();
         crashed = new ImageIcon("crashed.gif").getImage();
@@ -335,6 +340,10 @@ public class GamePanel extends JFrame {
         restartButton.setVisible(false);
         playSound(true);
         scoreValue.setText(String.valueOf(score) );
+    }
+    public void setSelectedImageName(String imageName) {
+        selectedImageName = imageName;
+        System.out.println(selectedImageName);
     }
 }
 

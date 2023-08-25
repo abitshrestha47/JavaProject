@@ -25,7 +25,9 @@ public class Main {
     }
     private void showGamePanel(){
         frame.remove(menu);
-        gamePanel=new GamePanel();
+        String selectedImageName = menu.getSelectedImageName(); // Get the selected image's name
+        gamePanel=new GamePanel(selectedImageName);
+        gamePanel.setSelectedImageName(selectedImageName);
         frame.add(gamePanel);
         frame.revalidate();
         frame.repaint();
