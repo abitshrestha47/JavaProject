@@ -53,6 +53,7 @@ public class GamePanel extends JFrame {
     private Image villian2;
     private int score = 0;
     private JButton restartButton;
+    private JButton MenuButton;
     private  JLabel scoreValue;
     private int highScore = 0;
 //    for creating random villian
@@ -60,10 +61,12 @@ public class GamePanel extends JFrame {
     public int randomNumber2;
     String[] villianImg = {"villian1.png","villian2.png","villian3.png"};
     private String selectedImageName;
+    private MenuPanel menu;
 
 
-    public GamePanel(String imageString) {
+    public GamePanel(String imageString,MenuPanel menu) {
         this.selectedImageName=imageString;
+        this.menu=menu;
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         //        for background image
@@ -77,8 +80,22 @@ public class GamePanel extends JFrame {
             scoreValue.setBounds(410, 50, 100, 60);
             scoreValue.setFont(new Font("Arial", Font.BOLD, 70));
             scoreValue.setForeground(Color.WHITE);
+
+            //MENUBUTTON
+            MenuButton=new JButton("Menu");
+            MenuButton.setBackground(Color.RED);
+            MenuButton.setForeground(Color.WHITE);
+            MenuButton.setFont(new Font("Arial", Font.BOLD, 12));
+            MenuButton.setVisible(false); //hide the button initially
+            MenuButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    gotoMenu();
+                }
+            });
+
+            //RESTART BUTTON
             restartButton = new JButton("Restart");
-            restartButton.setBounds(440, 283, 80, 30);
             restartButton.setBackground(Color.RED);
             restartButton.setForeground(Color.WHITE);
             restartButton.setFont(new Font("Arial", Font.BOLD, 12));
@@ -89,8 +106,15 @@ public class GamePanel extends JFrame {
                     restart();
                 }
             });
+
+            //SETLAYOUT && BOUNDS
+            MenuButton.setBounds(490, 283, 80, 30);
+            restartButton.setBounds(400, 283, 80, 30);
+
+       
             backgroundLabel.add(scoreValue);
             backgroundLabel.add(restartButton);
+            backgroundLabel.add(MenuButton);
             backgroundLabel.setLayout(null);
             //add(restartButton);
         } catch (IOException e) {
@@ -102,7 +126,12 @@ public class GamePanel extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
         // System.out.println(selectedImageName);
-        planeImage = new ImageIcon(selectedImageName).getImage();
+        if(selectedImageName!=null){
+            planeImage = new ImageIcon(selectedImageName).getImage();
+        }
+        else{
+            planeImage=new ImageIcon("heroUfo.png").getImage();
+        }
         // System.out.println(planeImage);
         treeImage = new ImageIcon("downsideRock.png").getImage();
         ufoImage = new ImageIcon("upsideRock.png").getImage();
@@ -169,6 +198,7 @@ public class GamePanel extends JFrame {
     private void update() {
         if (!isRunning) {
             restartButton.setVisible(true); // show the button when the game is over
+            MenuButton.setVisible(true);
             // Update the high score
             if (score > highScore) {
                 highScore = score;
@@ -313,6 +343,13 @@ public class GamePanel extends JFrame {
             g.drawString("High score: " + highScore, width / 2 - 80, height / 2 + 100);
         }
     }
+    //goto menu
+    private void gotoMenu(){
+        setContentPane(menu);
+        revalidate();
+        repaint();
+    }
+
 //    to restart a game
     private void restart() {
         ufoX = 100;
@@ -338,6 +375,7 @@ public class GamePanel extends JFrame {
         isRunning = true;
         score = 0;
         restartButton.setVisible(false);
+        MenuButton.setVisible(false);
         playSound(true);
         scoreValue.setText(String.valueOf(score) );
     }

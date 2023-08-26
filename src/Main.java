@@ -12,6 +12,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000,600);
 
+        //TO SHOW MENU PANEL AT FIRST
         menu=new MenuPanel();
         menu.getStartButton().addActionListener(new ActionListener() {
             @Override
@@ -19,14 +20,22 @@ public class Main {
                 showGamePanel();
             }
         });
+        menu.getExitButton().addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                System.exit(0);
+            }
+        });
         frame.add(menu);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
+    
+    //TO SHOW GAMEPANEL AFTER START
     private void showGamePanel(){
         frame.remove(menu);
         String selectedImageName = menu.getSelectedImageName(); // Get the selected image's name
-        gamePanel=new GamePanel(selectedImageName);
+        gamePanel=new GamePanel(selectedImageName,menu);
         gamePanel.setSelectedImageName(selectedImageName);
         frame.add(gamePanel);
         frame.revalidate();
