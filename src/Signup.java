@@ -3,6 +3,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -21,25 +23,36 @@ public class Signup extends JPanel{
     Signup(){
         setLayout(null);
         usernameLabel=new JLabel("Username:");
-        usernameLabel.setForeground(Color.WHITE);
+        usernameLabel.setForeground(Color.decode("#01bfba"));
         emailLabel=new JLabel("Email:");
-        emailLabel.setForeground(Color.WHITE);
+        emailLabel.setForeground(Color.decode("#01bfba"));
         passwordLabel=new JLabel("Password:");
-        passwordLabel.setForeground(Color.WHITE);
+        passwordLabel.setForeground(Color.decode("#01bfba"));
 
-        username=new JTextField("Enter your username...");
-        email=new JTextField("Enter your email...");
-        password=new JTextField("Enter your password...");
+        username=new JTextField("");
+        username.setForeground(Color.WHITE);
+        username.setBorder(new LineBorder(Color.decode("#25828b")));
+        email=new JTextField("");
+        email.setBorder(new LineBorder(Color.decode("#25828b")));
+        email.setForeground(Color.WHITE);
+        password=new JTextField("");
+        password.setBorder(new LineBorder(Color.decode("#25828b")));
+        password.setForeground(Color.WHITE);
         submitButton=new JButton("Submit");
+        submitButton.setBorder(new LineBorder(Color.decode("#25828b")));
 
-        usernameLabel.setBounds(500,200,100,50);
-        emailLabel.setBounds(500,270,100,50);
-        passwordLabel.setBounds(500,340,100,50);
 
-        username.setBounds(500,240,200,40);
-        email.setBounds(500,310,200,40);
-        password.setBounds(500,380,200,40);
-        submitButton.setBounds(500,430,100,30);
+        usernameLabel.setBounds(450,100,100,50);
+        emailLabel.setBounds(450,170,100,50);
+        passwordLabel.setBounds(450,240,100,50);
+
+        username.setBounds(450,140,200,40);
+        username.setOpaque(false);
+        email.setBounds(450,210,200,40);
+        email.setOpaque(false);
+        password.setBounds(450,280,200,40);
+        password.setOpaque(false);
+        submitButton.setBounds(450,330,100,30);
          //TO REMOVE BACKGROUND OF BUTTON
         submitButton.setContentAreaFilled(false);
         submitButton.setForeground(Color.WHITE);
