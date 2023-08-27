@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.*;
 public class Main {
@@ -7,6 +8,7 @@ public class Main {
     private static GamePanel gamePanel;
     private static JFrame frame;
     private static Signup signup;
+    private static Login login;
     public Main() {
         frame=new JFrame();
         frame.setTitle("UFO Game");
@@ -48,9 +50,24 @@ public class Main {
         frame.revalidate();
         frame.repaint();
     }
+    public void gotoLogin(Signup signUp){
+        frame.remove(signup);
+        login=new Login();
+        frame.add(login);
+        frame.revalidate();
+        frame.repaint();
+    }
     private void showSignupPanel(){
         frame.remove(menu);
-        signup=new Signup();
+        try {
+            signup=new Signup();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         frame.add(signup);
         frame.revalidate();
         frame.repaint();

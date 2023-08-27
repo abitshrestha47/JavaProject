@@ -6,6 +6,12 @@ public class DBManager {
     DBManager() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.cj.jdbc.Driver");
     String url="jdbc:mysql://localhost/spacegame";
-    conn=DriverManager.getConnection(url,"root","root");
-    }
+    try {
+        conn = DriverManager.getConnection(url,"root", "root");
+        System.out.println("Database connection successful!");
+    } catch (SQLException e) {
+        System.err.println("Database connection failed: " + e.getMessage());
+        e.printStackTrace();
+        throw e; 
+    }    }
 }
