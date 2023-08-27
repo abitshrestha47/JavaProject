@@ -6,6 +6,7 @@ public class Main {
     private static MenuPanel menu;
     private static GamePanel gamePanel;
     private static JFrame frame;
+    private static Signup signup;
     public Main() {
         frame=new JFrame();
         frame.setTitle("UFO Game");
@@ -26,6 +27,12 @@ public class Main {
                 System.exit(0);
             }
         });
+        menu.getSignupButton().addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e){
+                showSignupPanel();
+            }
+        });
         frame.add(menu);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
@@ -38,6 +45,13 @@ public class Main {
         gamePanel=new GamePanel(selectedImageName,menu);
         gamePanel.setSelectedImageName(selectedImageName);
         frame.add(gamePanel);
+        frame.revalidate();
+        frame.repaint();
+    }
+    private void showSignupPanel(){
+        frame.remove(menu);
+        signup=new Signup();
+        frame.add(signup);
         frame.revalidate();
         frame.repaint();
     }

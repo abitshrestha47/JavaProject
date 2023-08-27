@@ -13,6 +13,7 @@ public class MenuPanel extends JPanel {
     private String selectedImage;
     private JButton startButton;
     private JButton exitButton;
+    private JButton signupButton;
     private BufferedImage backgroundImage;
     private BufferedImage rocketImage;
     private BufferedImage ufoImage;
@@ -97,6 +98,18 @@ public class MenuPanel extends JPanel {
         // exitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         exitButton.setFocusable(false);
 
+        //SIGNUP BUTTON
+        signupButton=new JButton("<html><u>Signup</u></html>");
+        signupButton.setBackground(Color.BLACK);
+        signupButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        //TO REMOVE BORDER OF BUTTON
+        signupButton.setBorderPainted(false);
+        //TO REMOVE BACKGROUND OF BUTTON
+        signupButton.setContentAreaFilled(false);
+        signupButton.setFont(new Font("Arial", Font.BOLD, 18)); 
+        signupButton.setFocusable(false);
+        signupButton.setForeground(Color.WHITE);
+
         //CHOOSE CHARCTER LABEL
         chooseCharacter=new JLabel("Choose Your Character");
         chooseCharacter.setForeground(Color.WHITE);
@@ -107,11 +120,13 @@ public class MenuPanel extends JPanel {
         startButton.setBounds(420,50,150,50);
         exitButton.setBounds(420, 110, 150, 50);
         chooseCharacter.setBounds(380, 450, 500, 50);
+        signupButton.setBounds(300,500,150,50);
         
         //MENUPANEL COMPONENTS ADD
         add(startButton);
         add(exitButton);
         add(chooseCharacter);
+        add(signupButton);
 
         //BACKGROUND IMAGE AND COMPONENNT IMAGES
         try {
@@ -283,6 +298,10 @@ public class MenuPanel extends JPanel {
     //TO PASS THE SELECTED CHARACTER TO GAMEPANEL
     public String getSelectedImageName() {
         return selectedImage;
+    }
+
+    public JButton getSignupButton(){
+        return signupButton;
     }
 
     //TO RETURN THE START BUTTON
