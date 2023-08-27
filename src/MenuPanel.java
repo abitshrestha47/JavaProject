@@ -37,6 +37,49 @@ public class MenuPanel extends JPanel {
     private JLabel chooseCharacter;
 
     MenuPanel() {
+        addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent e){
+                     if (rocketImage != null && isWithinRocketImageBounds(e.getX(), e.getY())) {
+                        selectedImage = "rocket.png";
+                        ufoShipBool=false;
+                        rocketshipBool=false;
+                        rocketBool=true;
+                          if (timerUFO != null && timerUFO.isRunning()) {
+                                timerUFO.stop();
+                           }
+                           if(timerRocketShip!=null && timerRocketShip.isRunning()) {
+                            timerRocketShip.stop();
+                           }
+                        callThis();
+                    }
+                    else if (ufoImage != null && isWithinUFOImageBounds(e.getX(), e.getY())) {
+                        selectedImage = "ufo.png";
+                        rocketBool=false;
+                        rocketshipBool=false;
+                        ufoShipBool=true;
+                        if(timer!=null && timer.isRunning()){
+                            timer.stop();
+                        }
+                        if(timerRocketShip!=null && timerRocketShip.isRunning()){
+                            timerRocketShip.stop();
+                        }
+                        callUfo();
+                    }
+                    else if (rocketShipImage != null && isWithinRocketShipImageBounds(e.getX(), e.getY())) {
+                        selectedImage = "rocket-ship.png";
+                        ufoShipBool=false;
+                        rocketBool=false;
+                        rocketshipBool=true;
+                        if (timerUFO != null && timerUFO.isRunning()) {
+                                timerUFO.stop();
+                           }
+                        if(timer!=null && timer.isRunning()){
+                            timer.stop();
+                           }
+                        callRocketShip();
+                    }
+            }
+        });
         setLayout(null);
         //START BUTTON
         startButton = new JButton("Start Game");
@@ -152,32 +195,35 @@ public class MenuPanel extends JPanel {
 
     //FOR FLOATING OF UFO FUNCTION
     private void updateUFOPosition() {
-        if (ufoY <= (getHeight()/2 + 10)) {
-            ufoShipBool = true; 
-        } else if (ufoY >= (getHeight()/2 - 10)) {
-            ufoShipBool = false; 
-        }
+        if (ufoY <= getHeight() / 2 -50) {
+            ufoShipBool =false; 
+        } 
+        // else if (ufoY >= getHeight() / 2 - 150) {
+        //     ufoShipBool =true; 
+        // }
 
         if (ufoShipBool) {
-            ufoY++;
+            ufoY--;
         } else {
             ufoY--;
+            System.out.println(ufoY);
         }
     }
 
     //FOR FLOATING OF ROCKETSHIP FUNCTION
     private void updateRocketShipPosition() {
-        if (rocketShipY <= (getHeight()/3-70)) {
+        if (rocketShipY <= (getHeight() / 3 + 120)) {
             rocketshipBool = true; 
         } else if (rocketShipY >= (getHeight()/3+70)) {
-            ufoShipBool = false; 
+            rocketshipBool = false; 
         }
 
         if (rocketshipBool) {
-            rocketShipY++;
-        } else {
+           rocketShipY++;
+        } 
+        else {
             rocketShipY--;
-        }
+      }
     }
 
     //PAINT TO PAINT IMAGES AND OTHER CONTENTS
@@ -214,77 +260,25 @@ public class MenuPanel extends JPanel {
             g.drawImage(rocketImage, rocketX, rocketY, rocketWidth, rocketHeight, this);
         }
 
-        //MOUSELISTENER FOR ROCKET
-        addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (rocketImage != null && isWithinRocketImageBounds(e.getX(), e.getY())) {
-                        selectedImage = "rocket.png";
-                        ufoShipBool=false;
-                        rocketshipBool=false;
-                        rocketBool=true;
-                          if (timerUFO != null && timerUFO.isRunning()) {
-                                timerUFO.stop();
-                           }
-                        callThis();
-                        // repaint();
-                    }
-                }
-            });
 
         //FOR UFO
         if (ufoImage != null) {
             if(!ufoShipBool){
                 ufoX = (getWidth() / 3 + 320);
                 ufoY = (getHeight() / 2 - 50);
-                // repaint();
             }
             g.drawImage(ufoImage, ufoX, ufoY, 90, 90, this);
         }
 
-        //MOUSELISTENER FOR UFO
-        addMouseListener(new MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-                    if (ufoImage != null && isWithinUFOImageBounds(e.getX(), e.getY())) {
-                        selectedImage = "ufo.png";
-                        rocketBool=false;
-                        rocketshipBool=false;
-                        ufoShipBool=true;
-                        if(timer!=null && timer.isRunning()){
-                            timer.stop();
-                        }
-                        callUfo();
-                        // repaint();
-                    }
-                }
-        });
-
         //FOR ROCKET SHIP ANOTHER CHARACTER
         if (rocketShipImage != null) {
-             rocketShipX = (getWidth() / 5);
-             rocketShipY = (getHeight() / 3 + 70);
+            if(!rocketshipBool){
+                rocketShipX = (getWidth() / 5);
+                rocketShipY = (getHeight() / 3 + 70);
+            }
             g.drawImage(rocketShipImage, rocketShipX, rocketShipY, 120, 120, this);
         }
-        
-        //MOUSELISTENER FOR ROCKETSHIP
-        addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                    if (rocketShipImage != null && isWithinRocketShipImageBounds(e.getX(), e.getY())) {
-                        selectedImage = "rocket-ship.png";
-                        ufoShipBool=false;
-                        rocketBool=false;
-                        rocketshipBool=true;
-                           if (timerUFO != null && timerUFO.isRunning()) {
-                                timerUFO.stop();
-                           }
-                          if (timerRocketShip != null && timerRocketShip.isRunning()) {
-                                timerRocketShip.stop();
-                           }
-                        callRocketShip();
-                        // repaint();                    
-                    }
-                }
-            });
-        }
+    }
 
     //TO PASS THE SELECTED CHARACTER TO GAMEPANEL
     public String getSelectedImageName() {
