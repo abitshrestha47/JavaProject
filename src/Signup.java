@@ -63,7 +63,7 @@ public class Signup extends JPanel{
         password=new JTextField("");
         password.setBorder(new LineBorder(Color.decode("#25828b")));
         password.setForeground(Color.WHITE);
-        submitButton=new JButton("Submit");
+        submitButton=new JButton("Sign UP");
         submitButton.setBorder(new LineBorder(Color.decode("#25828b")));
 
         submitButton.addActionListener(new ActionListener() {
@@ -72,6 +72,7 @@ public class Signup extends JPanel{
                 insertDB();
             }
         });
+        submitButton.setFocusable(false);
 
         usernameLabel.setBounds(450,100,100,50);
         emailLabel.setBounds(450,170,100,50);
@@ -124,5 +125,11 @@ public class Signup extends JPanel{
         }
     }
     private void gotoLogin(){
+        login=new Login();
+        Window ancestorWindow=SwingUtilities.getWindowAncestor(signup);
+        ancestorWindow.remove(signup);
+        ancestorWindow.add(login);
+        ancestorWindow.revalidate();
+        ancestorWindow.repaint();
     }
 }
