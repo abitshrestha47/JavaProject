@@ -28,11 +28,11 @@ public class Signup extends JPanel{
     private JTextField email;
     private JTextField password;
     private JButton submitButton;
-    private Signup signup;
     private Login login;
-    Signup() throws SQLException, ClassNotFoundException, RuntimeException{
+    private MenuPanel menuPanel;
+    Signup(MenuPanel menuPanel) throws SQLException, ClassNotFoundException, RuntimeException{
+        this.menuPanel=menuPanel;
         setLayout(null);
-        signup=this;
         dbManager=new DBManager();
         insertStatement=dbManager.conn.prepareStatement("INSERT INTO users(username,email,password) VALUES (?,?,?)");
         usernameLabel=new JLabel("Username:");
@@ -125,9 +125,9 @@ public class Signup extends JPanel{
         }
     }
     private void gotoLogin(){
-        login=new Login();
-        Window ancestorWindow=SwingUtilities.getWindowAncestor(signup);
-        ancestorWindow.remove(signup);
+        Window ancestorWindow=SwingUtilities.getWindowAncestor(this);
+        login=new Login(this,ancestorWindow,menuPanel);
+        ancestorWindow.remove(this);
         ancestorWindow.add(login);
         ancestorWindow.revalidate();
         ancestorWindow.repaint();

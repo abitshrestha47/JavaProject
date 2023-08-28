@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -29,7 +30,17 @@ public class Login extends JPanel{
     private Timer timer;
     private int flyerY;
     private boolean movingUp=true;
-    Login(){
+    private Login loginThis;
+    private MenuPanel menuPanel;
+    private Signup signup;
+    private Window windowAncestorMain;
+    Login(Signup signUp,Window main,MenuPanel menuPanel){
+        loginThis=this;
+        this.signup=signUp;
+        windowAncestorMain=main;
+        System.out.println(main);
+        System.out.println(signup);
+        this.menuPanel=menuPanel;
         try {
             dbManager=new DBManager();
         } catch (ClassNotFoundException e) {
@@ -130,6 +141,10 @@ public class Login extends JPanel{
 
             if((resultset).next()){                
                 System.out.println("sucessful");
+                windowAncestorMain.remove(loginThis);
+                windowAncestorMain.add(menuPanel);
+                windowAncestorMain.revalidate();
+                windowAncestorMain.repaint();
             }
             else{
                 System.out.println("failed");

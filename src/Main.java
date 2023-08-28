@@ -50,17 +50,10 @@ public class Main {
         frame.revalidate();
         frame.repaint();
     }
-    public void gotoLogin(Signup signUp){
-        frame.remove(signup);
-        login=new Login();
-        frame.add(login);
-        frame.revalidate();
-        frame.repaint();
-    }
     private void showSignupPanel(){
         frame.remove(menu);
         try {
-            signup=new Signup();
+            signup=new Signup(menu);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
