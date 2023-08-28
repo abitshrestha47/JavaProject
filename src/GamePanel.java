@@ -11,20 +11,24 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
-public class GamePanel extends JFrame {
-    private ImageIcon backgroundImage;
-    //game width and height
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class GamePanel extends JPanel {
+    private PreparedStatement updateStatement;
+    // game width and height
     private int width = 1000;
     private int height = 600;
-    //    object starting position
+    // object starting position
     private int ufoX = 100;
     private int ufoY = 250;
-    //    object size and speed
+    // object size and speed
     private int ufoSize = 50;
-    //    object falling speed from top to bottom
+    // object falling speed from top to bottom
     private int ufoSpeed = 0;
     private int pipeX = width + 50;
-    //    gap between the upPipe and the downPipe
+    // gap between the upPipe and the downPipe
     private int pipeGap = 200;
     private int pipeWidth = 120;
     private int pipe1Height = 230;
@@ -40,7 +44,7 @@ public class GamePanel extends JFrame {
     private int redObstacleWidth2 = 30;
     private int redObstacleHeight2 = 30;
     private int redObstacleSpeed2 = 5;
-    private boolean redObstacleFired2= false;
+    private boolean redObstacleFired2 = false;
     private int redObstacleSize2 = 70;
     private int redObstacleX2 = width + 50;
     public boolean isRunning = true;
@@ -48,28 +52,58 @@ public class GamePanel extends JFrame {
     private Image planeImage;
     private Image treeImage;
     private Image ufoImage;
-    private  Image crashed;
+    private Image crashed;
     private Image villian;
     private Image villian2;
     private int score = 0;
     private JButton restartButton;
     private JButton MenuButton;
-    private  JLabel scoreValue;
+    private JLabel scoreValue;
     private int highScore = 0;
-//    for creating random villian
+    // for creating random villian
     public int randomNumber;
     public int randomNumber2;
-    String[] villianImg = {"villian1.png","villian2.png","villian3.png"};
+    String[] villianImg = { "villian1.png", "villian2.png", "villian3.png" };
     private String selectedImageName;
     private MenuPanel menu;
+    private int id;
+    public DBManager dbManager;
+    private PreparedStatement selectStatement;
+    private JLabel highScoreValue;
 
+    public GamePanel(String imageString, MenuPanel menu, int userID) {
+        try {
+            dbManager = new DBManager();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        this.selectedImageName = imageString;
+        this.menu = menu;
+        id = userID;
+        // System.out.println(id);
 
-    public GamePanel(String imageString,MenuPanel menu) {
-        this.selectedImageName=imageString;
-        this.menu=menu;
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-        //        for background image
+        // for background image
+        if (id != 0) {
+            try {
+                updateStatement = dbManager.conn.prepareStatement("UPDATE users SET highscore=? WHERE id=?");
+                selectStatement = dbManager.conn.prepareStatement("SELECT * FROM users WHERE id = ?");
+                selectStatement.setInt(1, id);
+                ResultSet resultSet = selectStatement.executeQuery();
+                if (resultSet.next()) {
+                    int dbHighscore = resultSet.getInt("highscore");
+                    // System.out.println(dbHighscore);
+                    highScore=dbHighscore;
+                    highScoreValue = new JLabel(String.valueOf(highScore));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             BufferedImage originalImage = ImageIO.read(new File("background.jpg"));
             Image scaledImage = originalImage.getScaledInstance(1100, 600, Image.SCALE_SMOOTH);
@@ -81,12 +115,12 @@ public class GamePanel extends JFrame {
             scoreValue.setFont(new Font("Arial", Font.BOLD, 70));
             scoreValue.setForeground(Color.WHITE);
 
-            //MENUBUTTON
-            MenuButton=new JButton("Menu");
+            // MENUBUTTON
+            MenuButton = new JButton("Menu");
             MenuButton.setBackground(Color.RED);
             MenuButton.setForeground(Color.WHITE);
             MenuButton.setFont(new Font("Arial", Font.BOLD, 12));
-            MenuButton.setVisible(false); //hide the button initially
+            MenuButton.setVisible(false); // hide the button initially
             MenuButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -94,12 +128,12 @@ public class GamePanel extends JFrame {
                 }
             });
 
-            //RESTART BUTTON
+            // RESTART BUTTON
             restartButton = new JButton("Restart");
             restartButton.setBackground(Color.RED);
             restartButton.setForeground(Color.WHITE);
             restartButton.setFont(new Font("Arial", Font.BOLD, 12));
-            restartButton.setVisible(false); //hide the button initially
+            restartButton.setVisible(false); // hide the button initially
             restartButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -107,68 +141,55 @@ public class GamePanel extends JFrame {
                 }
             });
 
-            //SETLAYOUT && BOUNDS
-            MenuButton.setBounds(490, 283, 80, 30);
-            restartButton.setBounds(400, 283, 80, 30);
+            // SETLAYOUT && BOUNDS
+            MenuButton.setBounds(560, 300, 80, 30);
+            restartButton.setBounds(470, 300, 80, 30);
 
-       
             backgroundLabel.add(scoreValue);
             backgroundLabel.add(restartButton);
             backgroundLabel.add(MenuButton);
             backgroundLabel.setLayout(null);
-            //add(restartButton);
+            // add(restartButton);
         } catch (IOException e) {
             e.printStackTrace();
         }
         playSound(true);
-        setTitle("UFO Game");
         setSize(width, height);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
         // System.out.println(selectedImageName);
-        if(selectedImageName!=null){
+        if (selectedImageName != null) {
             planeImage = new ImageIcon(selectedImageName).getImage();
-        }
-        else{
-            planeImage=new ImageIcon("heroUfo.png").getImage();
+        } else {
+            planeImage = new ImageIcon("heroUfo.png").getImage();
         }
         // System.out.println(planeImage);
         treeImage = new ImageIcon("downsideRock.png").getImage();
         ufoImage = new ImageIcon("upsideRock.png").getImage();
         crashed = new ImageIcon("crashed.gif").getImage();
-//        villian = new ImageIcon("villian1.png").getImage();
+        // villian = new ImageIcon("villian1.png").getImage();
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    // System.out.println("hello");
                     ufoSpeed = -10;
                 }
             }
         });
-        JLabel backgroundLabel = new JLabel();
-        // Read the high score from a file (if it exists)
-        try {
-            File file = new File("highscore.txt");
-            Scanner scanner = new Scanner(file);
-            highScore = scanner.nextInt();
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            // If the file doesn't exist, create a new one
-            try {
-                File file = new File("highscore.txt");
-                FileWriter writer = new FileWriter(file);
-                writer.write("0");
-                writer.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                ufoSpeed = -10;
             }
-        }
-        JLabel highScoreLabel = new JLabel("High Score: " + highScore);
-        highScoreLabel.setBounds(100, 100, 200, 60);
-        highScoreLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        highScoreLabel.setForeground(Color.WHITE);
-        backgroundLabel.add(highScoreLabel);
-        setLocationRelativeTo(null);
+        });
+        // JLabel backgroundLabel = new JLabel();
+        // Read the high score from a file (if it exists)
+
+        // JLabel highScoreLabel = new JLabel("High Score: " + highScore);
+        // highScoreLabel.setBounds(100, 100, 200, 60);
+        // highScoreLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        // highScoreLabel.setForeground(Color.WHITE);
+        // backgroundLabel.add(highScoreLabel);
         Timer timer = new Timer(30, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -178,10 +199,12 @@ public class GamePanel extends JFrame {
         });
         timer.start();
     }
-    //    for sound
+
+    // for sound
     private void playSound(Boolean value) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("ufoSound.wav").getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem
+                    .getAudioInputStream(new File("ufoSound.wav").getAbsoluteFile());
             if (soundClip != null && soundClip.isRunning()) {
                 soundClip.stop();
             }
@@ -194,7 +217,8 @@ public class GamePanel extends JFrame {
             System.out.println("Error playing sound: " + ex.getMessage());
         }
     }
-//    for checking and updating the game status
+
+    // for checking and updating the game status
     private void update() {
         if (!isRunning) {
             restartButton.setVisible(true); // show the button when the game is over
@@ -202,37 +226,47 @@ public class GamePanel extends JFrame {
             // Update the high score
             if (score > highScore) {
                 highScore = score;
-                try {
-                    File file = new File("highscore.txt");
-                    FileWriter writer = new FileWriter(file);
-                    writer.write(Integer.toString(highScore));
-                    writer.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                if (id != 0) {
+                    try {
+                        updateStatement.setInt(1, highScore);
+                        updateStatement.setInt(2, id);
+                        updateStatement.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        File file = new File("highscore.txt");
+                        FileWriter writer = new FileWriter(file);
+                        writer.write(Integer.toString(highScore));
+                        writer.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
             return;
         }
-//        make object fall when a space is not clicked
+        // make object fall when a space is not clicked
         ufoY += ufoSpeed;
         ufoSpeed += 1;
 
-//        to create new obstacle one the old obstacle is out of screen
+        // to create new obstacle one the old obstacle is out of screen
         pipeX -= 5;
         if (pipeX + pipeWidth < 0) {
             pipeX = width;
             pipe1Height = (int) (Math.random() * (height - pipeGap - 100)) + 50;
             pipe2Height = height - pipe1Height - pipeGap;
         }
-//        generate the villians
+        // generate the villians
         redObstacleX -= 7;
         if (redObstacleX + redObstacleSize < 0) {
             redObstacleX = width;
             redObstacleY = (int) (Math.random() * (height - redObstacleSize - 50)) + 25;
             double doubleRandomNumber = Math.random() * 3;
-             randomNumber = (int)doubleRandomNumber;
+            randomNumber = (int) doubleRandomNumber;
         }
-        if(score > 3) {
+        if (score > 3) {
             redObstacleX2 -= 7;
             if (redObstacleX2 + redObstacleSize2 < 0) {
                 redObstacleX2 = width;
@@ -241,7 +275,7 @@ public class GamePanel extends JFrame {
                 randomNumber2 = (int) doubleRandomNumber;
             }
         }
-//        checks if the bird  collided with the pipe or not
+        // checks if the bird collided with the pipe or not
         if (ufoY < 0 || ufoY + ufoSize > height) {
             playSound(false);
             HelicopterSound.playCrashSound();
@@ -268,7 +302,7 @@ public class GamePanel extends JFrame {
                 isRunning = false;
             }
         }
-        //increment the score every time the object passes through a pipe
+        // increment the score every time the object passes through a pipe
         if (pipeX + pipeWidth == ufoX) {
             score++;
             scoreValue.setText(String.valueOf(score));
@@ -277,59 +311,116 @@ public class GamePanel extends JFrame {
         if (score > highScore) {
             highScore = score;
             // Write the new high score to the file
-            try {
-                File file = new File("highscore.txt");
-                FileWriter writer = new FileWriter(file);
-                writer.write(Integer.toString(highScore));
-                writer.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if (id != 0) {
+                try {
+                    updateStatement.setInt(1, highScore);
+                    updateStatement.setInt(2, id);
+                    updateStatement.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                try {
+                    File file = new File("highscore.txt");
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(Integer.toString(highScore));
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
         scoreValue.setText(String.valueOf(score));
         scoreValue.repaint();
         JLabel backgroundLabel = new JLabel();
-// Update the high score label
-        JLabel highScoreValue = new JLabel(String.valueOf(highScore));
+        // Update the high score label
+        if (id != 0) {
+            try {
+                selectStatement.setInt(1, id);
+                ResultSet resultSet = selectStatement.executeQuery();
+                if (resultSet.next()) {
+                    int dbHighscore = resultSet.getInt("highscore");
+                    highScore=dbHighscore;
+                    highScoreValue = new JLabel(String.valueOf(highScore));
+                    // System.out.println("if");
+                } else {
+                    highScoreValue.setText("NO SCORE FOUND");
+                    // System.out.println("if");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // System.out.println("else");
+            try {
+                File file = new File("highscore.txt");
+                Scanner scanner = new Scanner(file);
+                highScore = scanner.nextInt();
+                scanner.close();
+            } catch (FileNotFoundException e) {
+                // If the file doesn't exist, create a new one
+                try {
+                    File file = new File("highscore.txt");
+                    FileWriter writer = new FileWriter(file);
+                    writer.write("0");
+                    writer.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            highScoreValue = new JLabel(String.valueOf(highScore));
+        }
         highScoreValue.setBounds(700, 100, 100, 60);
         highScoreValue.setFont(new Font("Arial", Font.BOLD, 70));
         highScoreValue.setForeground(Color.WHITE);
         backgroundLabel.add(highScoreValue);
-        if (score > highScore) {
-            highScore = score;
-            try {
-                File file = new File("highscore.txt");
-                FileWriter writer = new FileWriter(file);
-                writer.write(Integer.toString(highScore));
-                writer.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        // if (score > highScore) {
+        // highScore = score;
+        // try {
+        // File file = new File("highscore.txt");
+        // FileWriter writer = new FileWriter(file);
+        // writer.write(Integer.toString(highScore));
+        // writer.close();
+        // } catch (IOException ex) {
+        // ex.printStackTrace();
+        // }
+        // if(id!=0){
+        // try {
+        // updateStatement.setInt(1,highScore);
+        // updateStatement.setInt(2, id);
+        // updateStatement.executeUpdate();
+        // } catch (SQLException e) {
+        // e.printStackTrace();
+        // }
+
+        // }
+        // }
     }
-    private void updateHighScore(int score) {
-        if (score > highScore) {
-            highScore = score;
-        }
-        try {
-            FileWriter writer = new FileWriter("highscore.txt");
-            writer.write(Integer.toString(highScore));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
+    // private void updateHighScore(int score) {
+    // if (score > highScore) {
+    // highScore = score;
+    // }
+    // try {
+    // FileWriter writer = new FileWriter("highscore.txt");
+    // writer.write(Integer.toString(highScore));
+    // writer.close();
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // }
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         villian = new ImageIcon(villianImg[randomNumber]).getImage();
         villian2 = new ImageIcon(villianImg[randomNumber2]).getImage();
         g.drawImage(planeImage, ufoX, ufoY, 60, 50, null);
-        g.drawImage(ufoImage,pipeX, 0, pipeWidth, pipe1Height,null);
-        g.drawImage(treeImage,pipeX, height - pipe2Height, pipeWidth, pipe2Height,null);
-//        g.setColor(Color.RED);
-        g.drawImage(villian,redObstacleX, redObstacleY, redObstacleSize, redObstacleSize,null);
-        g.drawImage(villian2,redObstacleX2, redObstacleY2, redObstacleSize2, redObstacleSize2,null);
+        g.drawImage(ufoImage, pipeX, 0, pipeWidth, pipe1Height, null);
+        g.drawImage(treeImage, pipeX, height - pipe2Height, pipeWidth, pipe2Height, null);
+        // g.setColor(Color.RED);
+        g.drawImage(villian, redObstacleX, redObstacleY, redObstacleSize, redObstacleSize, null);
+        g.drawImage(villian2, redObstacleX2, redObstacleY2, redObstacleSize2, redObstacleSize2, null);
         if (!isRunning) {
             g.drawImage(crashed, ufoX, ufoY, 50, 40, null);
             g.setColor(Color.RED);
@@ -343,14 +434,17 @@ public class GamePanel extends JFrame {
             g.drawString("High score: " + highScore, width / 2 - 80, height / 2 + 100);
         }
     }
-    //goto menu
-    private void gotoMenu(){
-        setContentPane(menu);
-        revalidate();
-        repaint();
+
+    // goto menu
+    private void gotoMenu() {
+        Window ancestorWindow=SwingUtilities.getWindowAncestor(this);
+        ancestorWindow.remove(this);
+        ancestorWindow.add(menu);
+        ancestorWindow.revalidate();
+        ancestorWindow.repaint();
     }
 
-//    to restart a game
+    // to restart a game
     private void restart() {
         ufoX = 100;
         ufoY = 250;
@@ -358,30 +452,30 @@ public class GamePanel extends JFrame {
         pipeX = width + 50;
         pipe1Height = 200;
         pipe2Height = height - pipe1Height - pipeGap;
-         redObstacleY = (int) (Math.random() * (height - 100)) + 50;
-       redObstacleWidth = 30;
-  redObstacleHeight = 30;
-       redObstacleSpeed = 5;
-      redObstacleFired = false;
-     redObstacleSize = 70;
-         redObstacleX = width + 50;
+        redObstacleY = (int) (Math.random() * (height - 100)) + 50;
+        redObstacleWidth = 30;
+        redObstacleHeight = 30;
+        redObstacleSpeed = 5;
+        redObstacleFired = false;
+        redObstacleSize = 70;
+        redObstacleX = width + 50;
         redObstacleY2 = (int) (Math.random() * (height - 100)) + 50;
         redObstacleWidth2 = 30;
-         redObstacleHeight2 = 30;
-      redObstacleSpeed2 = 5;
-         redObstacleFired2= false;
-       redObstacleSize2 = 70;
-         redObstacleX2 = width + 50;      
+        redObstacleHeight2 = 30;
+        redObstacleSpeed2 = 5;
+        redObstacleFired2 = false;
+        redObstacleSize2 = 70;
+        redObstacleX2 = width + 50;
         isRunning = true;
         score = 0;
         restartButton.setVisible(false);
         MenuButton.setVisible(false);
         playSound(true);
-        scoreValue.setText(String.valueOf(score) );
+        scoreValue.setText(String.valueOf(score));
     }
+
     public void setSelectedImageName(String imageName) {
         selectedImageName = imageName;
-        System.out.println(selectedImageName);
+        // System.out.println(selectedImageName);
     }
 }
-

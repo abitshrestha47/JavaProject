@@ -34,12 +34,12 @@ public class Login extends JPanel{
     private MenuPanel menuPanel;
     private Signup signup;
     private Window windowAncestorMain;
-    Login(Signup signUp,Window main,MenuPanel menuPanel){
+    private JLabel errorMessage;
+    Login(Window main,MenuPanel menuPanel){
         loginThis=this;
-        this.signup=signUp;
         windowAncestorMain=main;
-        System.out.println(main);
-        System.out.println(signup);
+        // System.out.println(main);
+        // System.out.println(signup);
         this.menuPanel=menuPanel;
         try {
             dbManager=new DBManager();
@@ -78,6 +78,12 @@ public class Login extends JPanel{
         }catch(IOException e){
             e.printStackTrace();
         }
+
+        errorMessage = new JLabel("Incorrect email or password");
+        errorMessage.setForeground(Color.RED);
+        errorMessage.setFont(new Font("Arial", Font.BOLD, 16));
+        errorMessage.setBounds(450, 360, 300, 30);
+        errorMessage.setVisible(false);
         headingLogin=new JLabel("Login");
         headingLogin.setForeground(Color.decode("#01bfba"));
         headingLogin.setFont(new Font("Arial", Font.BOLD, 20));
@@ -114,6 +120,7 @@ public class Login extends JPanel{
         add(email);
         add(password);
         add(login);
+        add(errorMessage);
 
         login.addActionListener(new ActionListener() {
             @Override 
@@ -141,13 +148,16 @@ public class Login extends JPanel{
 
             if((resultset).next()){                
                 System.out.println("sucessful");
+                int id=resultset.getInt("ID");
                 windowAncestorMain.remove(loginThis);
+                menuPanel.alterID(id);
                 windowAncestorMain.add(menuPanel);
                 windowAncestorMain.revalidate();
                 windowAncestorMain.repaint();
             }
             else{
                 System.out.println("failed");
+                errorMessage.setVisible(true);
             }
         }catch(SQLException e){
             e.printStackTrace();

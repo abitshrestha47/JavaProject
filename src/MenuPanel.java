@@ -14,6 +14,8 @@ public class MenuPanel extends JPanel {
     private JButton startButton;
     private JButton exitButton;
     private JButton signupButton;
+    private JButton logoutButton;
+    private JButton loginButton;
     private BufferedImage backgroundImage;
     private BufferedImage rocketImage;
     private BufferedImage ufoImage;
@@ -36,7 +38,7 @@ public class MenuPanel extends JPanel {
     private boolean ufoShipBool=false;
     private boolean rocketBool=false;
     private JLabel chooseCharacter;
-
+    private int id;
     MenuPanel() {
         addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
@@ -110,6 +112,32 @@ public class MenuPanel extends JPanel {
         signupButton.setFocusable(false);
         signupButton.setForeground(Color.WHITE);
 
+         //SIGNUP BUTTON
+        logoutButton=new JButton("<html><u>Logout</u></html>");
+        logoutButton.setBackground(Color.BLACK);
+        logoutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        //TO REMOVE BORDER OF BUTTON
+        logoutButton.setBorderPainted(false);
+        //TO REMOVE BACKGROUND OF BUTTON
+        logoutButton.setContentAreaFilled(false);
+        logoutButton.setFont(new Font("Arial", Font.BOLD, 18)); 
+        logoutButton.setFocusable(false);
+        logoutButton.setForeground(Color.WHITE);
+
+          //SIGNUP BUTTON
+        loginButton=new JButton("<html><u>Login</u></html>");
+        loginButton.setBackground(Color.BLACK);
+        loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        //TO REMOVE BORDER OF BUTTON
+        loginButton.setBorderPainted(false);
+        //TO REMOVE BACKGROUND OF BUTTON
+        loginButton.setContentAreaFilled(false);
+        loginButton.setFont(new Font("Arial", Font.BOLD, 18)); 
+        loginButton.setFocusable(false);
+        loginButton.setForeground(Color.WHITE);
+        if(id==0){
+            logoutButton.setVisible(false);
+        }
         //CHOOSE CHARCTER LABEL
         chooseCharacter=new JLabel("Choose Your Character");
         chooseCharacter.setForeground(Color.WHITE);
@@ -121,12 +149,26 @@ public class MenuPanel extends JPanel {
         exitButton.setBounds(420, 110, 150, 50);
         chooseCharacter.setBounds(380, 450, 500, 50);
         signupButton.setBounds(300,500,150,50);
+        logoutButton.setBounds(300,500,150,50);
+        loginButton.setBounds(305,500,500,50);
+
+        logoutButton.addActionListener(new ActionListener() {
+            @override
+            public void actionPerformed(ActionEvent e){
+                id=0;
+                logoutButton.setVisible(false);
+                signupButton.setVisible(true);
+                loginButton.setVisible(true);
+            }
+        });
         
         //MENUPANEL COMPONENTS ADD
         add(startButton);
         add(exitButton);
         add(chooseCharacter);
         add(signupButton);
+        add(logoutButton);
+        add(loginButton);
 
         //BACKGROUND IMAGE AND COMPONENNT IMAGES
         try {
@@ -221,7 +263,7 @@ public class MenuPanel extends JPanel {
             ufoY--;
         } else {
             ufoY--;
-            System.out.println(ufoY);
+            // System.out.println(ufoY);
         }
     }
 
@@ -303,10 +345,16 @@ public class MenuPanel extends JPanel {
     public JButton getSignupButton(){
         return signupButton;
     }
-
+    public JButton getLoginButton(){
+        return loginButton;
+    }
     //TO RETURN THE START BUTTON
     public JButton getStartButton() {
         return startButton;
+    }
+
+    public int getID(){
+        return id;
     }
 
     //EXIT BUTTON
@@ -332,6 +380,18 @@ public class MenuPanel extends JPanel {
         int UfoX = getWidth() / 5;
         int UfoY = getHeight() / 3+70;
         return x >= UfoX && x <= UfoX +120 && y >= UfoY && y <= UfoY +120;
+    }
+
+    public void alterID(int passedID){
+        id=passedID;
+        handleChange();
+    }
+    public void handleChange(){
+        if(id!=0){
+            signupButton.setVisible(false);
+            logoutButton.setVisible(true);
+            loginButton.setVisible(false);
+        }
     }
 
 }

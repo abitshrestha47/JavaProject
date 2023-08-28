@@ -126,7 +126,7 @@ public class Signup extends JPanel{
     }
     private void gotoLogin(){
         Window ancestorWindow=SwingUtilities.getWindowAncestor(this);
-        login=new Login(this,ancestorWindow,menuPanel);
+        login=new Login(ancestorWindow,menuPanel);
         ancestorWindow.remove(this);
         ancestorWindow.add(login);
         ancestorWindow.revalidate();
