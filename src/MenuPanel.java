@@ -150,9 +150,9 @@ public class MenuPanel extends JPanel {
         exitButton.setBounds(420, 110, 150, 50);
         exitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         chooseCharacter.setBounds(380, 450, 500, 50);
-        signupButton.setBounds(300,500,150,50);
+        signupButton.setBounds(320,480,150,50);
         logoutButton.setBounds(300,500,150,50);
-        loginButton.setBounds(305,500,500,50);
+        loginButton.setBounds(330,480,500,50);
 
         logoutButton.addActionListener(new ActionListener() {
             @override

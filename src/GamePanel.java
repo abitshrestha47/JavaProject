@@ -375,41 +375,7 @@ public class GamePanel extends JPanel {
         highScoreValue.setFont(new Font("Arial", Font.BOLD, 70));
         highScoreValue.setForeground(Color.WHITE);
         backgroundLabel.add(highScoreValue);
-        // if (score > highScore) {
-        // highScore = score;
-        // try {
-        // File file = new File("highscore.txt");
-        // FileWriter writer = new FileWriter(file);
-        // writer.write(Integer.toString(highScore));
-        // writer.close();
-        // } catch (IOException ex) {
-        // ex.printStackTrace();
-        // }
-        // if(id!=0){
-        // try {
-        // updateStatement.setInt(1,highScore);
-        // updateStatement.setInt(2, id);
-        // updateStatement.executeUpdate();
-        // } catch (SQLException e) {
-        // e.printStackTrace();
-        // }
-
-        // }
-        // }
     }
-
-    // private void updateHighScore(int score) {
-    // if (score > highScore) {
-    // highScore = score;
-    // }
-    // try {
-    // FileWriter writer = new FileWriter("highscore.txt");
-    // writer.write(Integer.toString(highScore));
-    // writer.close();
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
     @Override
     public void paint(Graphics g) {
         super.paint(g);
