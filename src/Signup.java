@@ -119,7 +119,7 @@ public class Signup extends JPanel{
         emailLabel.setBounds(450,170,100,50);
         passwordLabel.setBounds(450,240,100,50);
         gotoMenuLabel.setBounds(450,330,100,100);
-        errorMessage.setBounds(450,350,150,100);
+        errorMessage.setBounds(450,350,200,100);
         errorMessage.setFont(new Font("Arial", Font.BOLD, 16));
         errorMessage.setVisible(false);
 
@@ -163,17 +163,21 @@ public class Signup extends JPanel{
         try{
             String emailInput=email.getText();  
             if(isEmailAlreadyTaken(emailInput)){
+                errorMessage.setText("Email is already taken");
                 errorMessage.setVisible(true);
             }
             else{
                 if(username.getText()==null||username.getText().isEmpty()){
-                    System.out.println("Username can't be empty");
+                    errorMessage.setText("Username can't be empty");
+                    errorMessage.setVisible(true);
                 }
                 else if(email.getText()==null||email.getText().isEmpty()){
-                    System.out.println("Email can't be empty");
+                    errorMessage.setText("Email can't be empty");
+                    errorMessage.setVisible(true);
                 }
                 else if(password.getPassword()==null || password.getPassword().length==0){
-                    System.out.println("Password can't be empty");
+                    errorMessage.setText("Password can't be empty");
+                    errorMessage.setVisible(true);
                 }
                 else{
                     insertStatement.setString(1,username.getText());
