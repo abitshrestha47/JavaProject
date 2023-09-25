@@ -1,9 +1,12 @@
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +24,7 @@ public class Login extends JPanel{
     private JButton login;
     private PreparedStatement selectStatement;
     private JTextField email;
-    private JTextField password;
+    private JPasswordField password;
     private JLabel emailLabel;
     private JLabel passwordLabel;
     private JLabel headingLogin;
@@ -35,12 +38,25 @@ public class Login extends JPanel{
     private Signup signup;
     private Window windowAncestorMain;
     private JLabel errorMessage;
+    private JLabel createAccount;
+    private JLabel gotoMenu;
+
     Login(Window main,MenuPanel menuPanel){
         loginThis=this;
         windowAncestorMain=main;
         // System.out.println(main);
         // System.out.println(signup);
         this.menuPanel=menuPanel;
+        UIManager.getLookAndFeelDefaults().put( "TextField.caretForeground", Color.WHITE );
+        try {
+            signup=new Signup(menuPanel);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         try {
             dbManager=new DBManager();
         } catch (ClassNotFoundException e) {
@@ -79,10 +95,12 @@ public class Login extends JPanel{
             e.printStackTrace();
         }
 
+        //to show incorrect email or password
         errorMessage = new JLabel("Incorrect email or password");
         errorMessage.setForeground(Color.RED);
+        
         errorMessage.setFont(new Font("Arial", Font.BOLD, 16));
-        errorMessage.setBounds(450, 360, 300, 30);
+        errorMessage.setBounds(450, 380, 300, 30);
         errorMessage.setVisible(false);
         headingLogin=new JLabel("Login");
         headingLogin.setForeground(Color.decode("#01bfba"));
@@ -91,25 +109,58 @@ public class Login extends JPanel{
         emailLabel.setForeground(Color.decode("#01bfba"));
         passwordLabel=new JLabel("Password:");
         passwordLabel.setForeground(Color.decode("#01bfba"));
+        gotoMenu=new JLabel("Goto Menu");
+        gotoMenu.setForeground(Color.decode("#01bfba"));
+        gotoMenu.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        
+        //create acc label
+        createAccount=new JLabel("<html><u>Create Account</u></html>");
+        createAccount.setForeground(Color.decode("#01bfba"));
+        createAccount.setCursor(Cursor.getPredefinedCursor((Cursor.HAND_CURSOR)));
+        createAccount.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                windowAncestorMain.remove(loginThis);
+                windowAncestorMain.add(signup);
+                windowAncestorMain.revalidate();
+                windowAncestorMain.repaint();
+            }
+        });
 
         email=new JTextField("");
         email.setBorder(new LineBorder(Color.decode("#25828b")));
         email.setForeground(Color.WHITE);
-        password=new JTextField("");
+        email.addMouseListener(new MouseAdapter() {
+            @override
+            public void mouseClicked(MouseEvent e) {
+                errorMessage.setVisible(false);
+            }
+        });
+        password=new JPasswordField("");
         password.setBorder(new LineBorder(Color.decode("#25828b")));
         password.setForeground(Color.WHITE);
+        password.addMouseListener(new MouseAdapter() {
+            @override
+            public void mouseClicked(MouseEvent e) {
+                errorMessage.setVisible(false);
+            }
+        });
         login=new JButton("Login");
         login.setBorder(new LineBorder(Color.decode("#25828b")));
 
         emailLabel.setBounds(450,170,100,50);
         passwordLabel.setBounds(450,240,100,50);
         headingLogin.setBounds(450,145,100,50);
+        createAccount.setBounds(450,283,100,100);
+        gotoMenu.setBounds(550,283,100,100);
 
         email.setBounds(450,210,200,40);
         email.setOpaque(false);
         password.setBounds(450,280,200,40);
         password.setOpaque(false);
-        login.setBounds(450,330,100,30);
+        login.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        login.setBounds(450,348,100,30);
+        login.setFocusable(false);
          //TO REMOVE BACKGROUND OF BUTTON
         login.setContentAreaFilled(false);
         login.setForeground(Color.WHITE);
@@ -121,6 +172,18 @@ public class Login extends JPanel{
         add(password);
         add(login);
         add(errorMessage);
+        add(createAccount);
+        add(gotoMenu);
+
+        gotoMenu.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                windowAncestorMain.remove(loginThis);
+                windowAncestorMain.add(menuPanel);
+                windowAncestorMain.revalidate();
+                windowAncestorMain.repaint();
+            }
+        });
 
         login.addActionListener(new ActionListener() {
             @Override 
@@ -143,7 +206,9 @@ public class Login extends JPanel{
     private void checkLogin(){
         try{
             selectStatement.setString(1,email.getText());
-            selectStatement.setString(2,password.getText());
+            char[] passwordChars=password.getPassword();
+            String password=new String(passwordChars);
+            selectStatement.setString(2,password);
             ResultSet resultset=selectStatement.executeQuery();
 
             if((resultset).next()){                
@@ -156,7 +221,6 @@ public class Login extends JPanel{
                 windowAncestorMain.repaint();
             }
             else{
-                System.out.println("failed");
                 errorMessage.setVisible(true);
             }
         }catch(SQLException e){

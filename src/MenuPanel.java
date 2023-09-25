@@ -145,8 +145,10 @@ public class MenuPanel extends JPanel {
         chooseCharacter.setFont(largerFont);
 
         //COMPONENTS LAYOUT MANAGE
+        startButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         startButton.setBounds(420,50,150,50);
         exitButton.setBounds(420, 110, 150, 50);
+        exitButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         chooseCharacter.setBounds(380, 450, 500, 50);
         signupButton.setBounds(300,500,150,50);
         logoutButton.setBounds(300,500,150,50);
