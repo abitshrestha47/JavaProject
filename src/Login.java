@@ -205,6 +205,15 @@ public class Login extends JPanel{
     }
     private void checkLogin(){
         try{
+            if(email.getText()==null || email.getText().isEmpty()){
+                errorMessage.setText("Email can't be empty");
+                errorMessage.setVisible(true);
+            }  
+            else if(password.getPassword()==null || password.getPassword().length==0){
+                errorMessage.setText("Password can't be empty");
+                errorMessage.setVisible(true);
+            }
+            else{
             selectStatement.setString(1,email.getText());
             char[] passwordChars=password.getPassword();
             String password=new String(passwordChars);
@@ -221,7 +230,9 @@ public class Login extends JPanel{
                 windowAncestorMain.repaint();
             }
             else{
+                errorMessage.setText("Incorrect email or password");
                 errorMessage.setVisible(true);
+            }
             }
         }catch(SQLException e){
             e.printStackTrace();
