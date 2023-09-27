@@ -438,9 +438,9 @@ public class MenuPanel extends JPanel {
             }
         }
     }
-    private void playBackgroundMusic() {
+    public void playBackgroundMusic() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("").getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("MenuMusic.wav").getAbsoluteFile());
             if (backgroundMusicClip != null && backgroundMusicClip.isRunning()) {
                 backgroundMusicClip.stop();
             }

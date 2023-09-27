@@ -442,6 +442,7 @@ public class GamePanel extends JPanel {
     private void gotoMenu() {
         Window ancestorWindow=SwingUtilities.getWindowAncestor(this);
         ancestorWindow.remove(this);
+        menu.playBackgroundMusic();
         ancestorWindow.add(menu);
         ancestorWindow.revalidate();
         ancestorWindow.repaint();
