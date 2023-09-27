@@ -8,7 +8,7 @@ public class DBManager {
     String url="jdbc:mysql://localhost/spacegame";
     try {
         conn = DriverManager.getConnection(url,"root", "root");
-        System.out.println("Database connection successful!");
+        // System.out.println("Database connection successful!");
     } catch (SQLException e) {
         System.err.println("Database connection failed: " + e.getMessage());
         e.printStackTrace();

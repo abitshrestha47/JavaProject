@@ -1,7 +1,12 @@
 import java.io.File;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.imageio.ImageIO;
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -26,6 +31,7 @@ public class MenuPanel extends JPanel {
     private Timer timerUFO;
     private Timer timerRocketShip;
     private  Image crashed;
+    private DBManager dbManager;
     int rocketWidth = 250;
     int rocketHeight = 250;
     int rocketX;
@@ -39,6 +45,8 @@ public class MenuPanel extends JPanel {
     private boolean rocketBool=false;
     private JLabel chooseCharacter;
     private int id;
+    private JLabel usernameLabel;
+    private PreparedStatement selectStatement;
     MenuPanel() {
         addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
@@ -84,6 +92,20 @@ public class MenuPanel extends JPanel {
             }
         });
         setLayout(null);
+        try {
+            dbManager=new DBManager();
+            selectStatement=dbManager.conn.prepareStatement("SELECT username FROM users WHERE ID=?");
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+
+
+        usernameLabel=new JLabel("Welcome, Guest");  
+        usernameLabel.setForeground(Color.WHITE); 
+        usernameLabel.setFont(new Font("Arial", Font.BOLD, 18)); 
+     
         //START BUTTON
         startButton = new JButton("Start Game");
         startButton.setBackground(new Color(38, 51, 93)); 
@@ -153,6 +175,7 @@ public class MenuPanel extends JPanel {
         signupButton.setBounds(370,480,150,50);
         logoutButton.setBounds(430,480,150,50);
         loginButton.setBounds(320,480,500,50);
+        usernameLabel.setBounds(440,510,500,50);
 
         logoutButton.addActionListener(new ActionListener() {
             @override
@@ -171,6 +194,7 @@ public class MenuPanel extends JPanel {
         add(signupButton);
         add(logoutButton);
         add(loginButton);
+        add(usernameLabel);
 
         //BACKGROUND IMAGE AND COMPONENNT IMAGES
         try {
@@ -393,6 +417,19 @@ public class MenuPanel extends JPanel {
             signupButton.setVisible(false);
             logoutButton.setVisible(true);
             loginButton.setVisible(false);
+            try {
+                selectStatement.setInt(1,id);
+                ResultSet usernamedb=selectStatement.executeQuery();
+                if(usernamedb.next()){
+                    String username=usernamedb.getString("username");
+                    usernameLabel.setText("Welcome, "+username);
+                }
+                else{
+                    System.out.println("username not found");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

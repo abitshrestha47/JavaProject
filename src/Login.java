@@ -40,6 +40,7 @@ public class Login extends JPanel{
     private JLabel errorMessage;
     private JLabel createAccount;
     private JLabel gotoMenu;
+    private Timer rocketStopTimer;
 
     Login(Window main,MenuPanel menuPanel){
         loginThis=this;
@@ -73,6 +74,17 @@ public class Login extends JPanel{
                     flyerY-=5;
                     if(flyerY<-250){
                         flyerY=getHeight();
+                    }
+                    if(flyerY>=165 && flyerY<=170){
+                            timer.stop();
+                            rocketStopTimer=new Timer(1500,new ActionListener(){
+                                @Override
+                                public void actionPerformed(ActionEvent e){
+                                    rocketStopTimer.stop();
+                                    timer.start();
+                                }
+                            });
+                            rocketStopTimer.start();
                     }
                 }
                 repaint();
@@ -221,7 +233,7 @@ public class Login extends JPanel{
             ResultSet resultset=selectStatement.executeQuery();
 
             if((resultset).next()){                
-                System.out.println("sucessful");
+                // System.out.println("sucessful");
                 int id=resultset.getInt("ID");
                 windowAncestorMain.remove(loginThis);
                 menuPanel.alterID(id);
