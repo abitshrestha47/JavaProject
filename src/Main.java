@@ -50,6 +50,7 @@ import java.sql.SQLException;
         //TO SHOW GAMEPANEL AFTER START
         private void showGamePanel(){
             frame.remove(menu);
+            menu.stopBackgroundMusic();
             String selectedImageName = menu.getSelectedImageName(); // Get the selected image's name
             int id=menu.getID();
             gamePanel=new GamePanel(selectedImageName,menu,id);

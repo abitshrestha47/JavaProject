@@ -13,7 +13,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 public class MenuPanel extends JPanel {
+    private Clip backgroundMusicClip;
     private String selectedImage;
     private JButton startButton;
     private JButton exitButton;
@@ -63,7 +68,7 @@ public class MenuPanel extends JPanel {
                         callThis();
                     }
                     else if (ufoImage != null && isWithinUFOImageBounds(e.getX(), e.getY())) {
-                        selectedImage = "ufo.png";
+                        selectedImage = "heroUfo.png";
                         rocketBool=false;
                         rocketshipBool=false;
                         ufoShipBool=true;
@@ -90,6 +95,8 @@ public class MenuPanel extends JPanel {
                     }
             }
         });
+        playBackgroundMusic();
+ 
         setLayout(null);
         try {
             dbManager=new DBManager();
@@ -431,5 +438,24 @@ public class MenuPanel extends JPanel {
             }
         }
     }
+    private void playBackgroundMusic() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("").getAbsoluteFile());
+            if (backgroundMusicClip != null && backgroundMusicClip.isRunning()) {
+                backgroundMusicClip.stop();
+            }
+            backgroundMusicClip = AudioSystem.getClip();
+            backgroundMusicClip.open(audioInputStream);
+            backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception ex) {
+            System.out.println("Error playing background music: " + ex.getMessage());
+        }
+    }
+    public void stopBackgroundMusic() {
+        if (backgroundMusicClip != null && backgroundMusicClip.isRunning()) {
+            backgroundMusicClip.stop();
+        }
+    }
+    
 
 }
