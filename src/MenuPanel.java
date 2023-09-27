@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
-import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;

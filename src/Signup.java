@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.FocusEvent;
 
 import java.awt.*;
@@ -36,6 +38,7 @@ public class Signup extends JPanel{
     Signup(MenuPanel menuPanel) throws SQLException, ClassNotFoundException, RuntimeException{
         this.menuPanel=menuPanel;
         UIManager.getLookAndFeelDefaults().put( "TextField.caretForeground", Color.WHITE );
+        UIManager.getLookAndFeelDefaults().put("PasswordField.caretForeground", Color.WHITE );
         setLayout(null);
         dbManager=new DBManager();
         insertStatement=dbManager.conn.prepareStatement("INSERT INTO users(username,email,password) VALUES (?,?,?)");

@@ -17,9 +17,11 @@ import java.sql.SQLException;
 
 public class GamePanel extends JPanel {
     private PreparedStatement updateStatement;
+    private Clip clickClip;
     // game width and height
     private int width = 1000;
     private int height = 600;
+    private boolean isPaused=false;
     // object starting position
     private int ufoX = 100;
     private int ufoY = 250;
@@ -72,6 +74,7 @@ public class GamePanel extends JPanel {
     private JLabel highScoreValue;
 
     public GamePanel(String imageString, MenuPanel menu, int userID) {
+        setFocusable(true); 
         try {
             dbManager = new DBManager();
         } catch (ClassNotFoundException e) {
@@ -81,7 +84,7 @@ public class GamePanel extends JPanel {
         }
         this.selectedImageName = imageString;
         this.menu = menu;
-        id = userID;
+        id = userID;    
         // System.out.println(id);
 
         setFocusable(true);
@@ -167,12 +170,20 @@ public class GamePanel extends JPanel {
         ufoImage = new ImageIcon("upsideRock.png").getImage();
         crashed = new ImageIcon("crashed.gif").getImage();
         // villian = new ImageIcon("villian1.png").getImage();
+        // addKeyListener(new KeyAdapter() {
+        //     @Override
+        //     public void keyPressed(KeyEvent e) {
+        //         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+        //              System.out.println("hello");
+        //             ufoSpeed = -10;
+        //         }
+        //     }
+        // });
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    // System.out.println("hello");
-                    ufoSpeed = -10;
+                    togglePause();
                 }
             }
         });
@@ -182,6 +193,7 @@ public class GamePanel extends JPanel {
                 ufoSpeed = -10;
             }
         });
+   
         // JLabel backgroundLabel = new JLabel();
         // Read the high score from a file (if it exists)
 
@@ -200,11 +212,21 @@ public class GamePanel extends JPanel {
         timer.start();
     }
 
+    private void togglePause(){
+        isPaused=!isPaused;
+        if (isPaused) {
+            playSound(false); 
+        } else {
+            playSound(true); 
+        }
+        checkPause();
+    }
+
     // for sound
     private void playSound(Boolean value) {
         try {
             AudioInputStream audioInputStream = AudioSystem
-                    .getAudioInputStream(new File("ufoSound.wav").getAbsoluteFile());
+                    .getAudioInputStream(new File("background0.wav").getAbsoluteFile());
             if (soundClip != null && soundClip.isRunning()) {
                 soundClip.stop();
             }
@@ -218,8 +240,23 @@ public class GamePanel extends JPanel {
         }
     }
 
+    private void checkPause(){
+        if(isPaused){
+            restartButton.setVisible(true);
+            MenuButton.setVisible(true);
+        }
+        else{
+            restartButton.setVisible(false);
+            MenuButton.setVisible(false);
+        }
+    }
+
     // for checking and updating the game status
     private void update() {
+        if(isPaused){
+            return;
+        }
+
         if (!isRunning) {
             restartButton.setVisible(true); // show the button when the game is over
             MenuButton.setVisible(true);
