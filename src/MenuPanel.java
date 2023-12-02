@@ -190,6 +190,7 @@ public class MenuPanel extends JPanel {
                 logoutButton.setVisible(false);
                 signupButton.setVisible(true);
                 loginButton.setVisible(true);
+                usernameLabel.setText("Welcome, Guest");
             }
         });
         

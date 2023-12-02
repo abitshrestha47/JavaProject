@@ -35,6 +35,7 @@ public class Signup extends JPanel{
     private MenuPanel menuPanel;
     private JLabel gotoMenuLabel;
     private JLabel errorMessage;
+    private JLabel signupLabelHeading;
     Signup(MenuPanel menuPanel) throws SQLException, ClassNotFoundException, RuntimeException{
         this.menuPanel=menuPanel;
         UIManager.getLookAndFeelDefaults().put( "TextField.caretForeground", Color.WHITE );
@@ -60,6 +61,9 @@ public class Signup extends JPanel{
             }
         });
 
+        signupLabelHeading=new JLabel("Sign Up");
+        signupLabelHeading.setForeground(Color.decode("#01bfba"));
+        signupLabelHeading.setFont(new Font("Arial", Font.BOLD, 20));
         errorMessage=new JLabel("Email already taken");
         errorMessage.setForeground(Color.RED);
         errorMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -118,6 +122,7 @@ public class Signup extends JPanel{
         });
         submitButton.setFocusable(false);
 
+        signupLabelHeading.setBounds(450,50,100,100);
         usernameLabel.setBounds(450,100,100,50);
         emailLabel.setBounds(450,170,100,50);
         passwordLabel.setBounds(450,240,100,50);
@@ -137,6 +142,7 @@ public class Signup extends JPanel{
         submitButton.setContentAreaFilled(false);
         submitButton.setForeground(Color.WHITE);
 
+        add(signupLabelHeading);
         add(emailLabel);
         add(passwordLabel);
         add(usernameLabel);
